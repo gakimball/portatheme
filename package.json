@@ -1,6 +1,6 @@
 {
   "name": "portatheme",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Small, opinionated theme bundler",
   "main": "index.js",
   "scripts": {

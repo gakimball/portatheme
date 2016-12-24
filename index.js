@@ -78,6 +78,17 @@ module.exports = class Theme {
   }
 
   /**
+   * Compile a Pug template to a string.
+   * @param {Object} [data] - Locals to pass to Pug renderer.
+   * @param {String} [layout='default'] - Theme template to use when rendering.
+   * @returns {String} Rendered HTML string.
+   */
+  compileString(data, layout) {
+    const template = path.join(this.location, `templates/${layout || 'default'}.pug`);
+    return pug.renderFile(template, data || {});
+  }
+
+  /**
    * Run the asset building process for the theme.
    * @returns {Promise} Promise which resolves when the build process is finished, or rejects if there's an error.
    */

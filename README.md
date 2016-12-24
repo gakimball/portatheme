@@ -87,6 +87,15 @@ Create a page using one of the theme's layouts, paired with a data object.
 
 Returns a Promise which resolves when the page has been written to disk, or rejects if there's an error.
 
+#### Theme.compileString([data, layout])
+
+Create an HTML string using one of the theme's layouts, paired with a data object.
+
+- **data** (Object): object to pass to Pug template.
+- **layout** (String): theme template to use. Defaults to `default`.
+
+Returns an HTML string.
+
 #### Theme.build()
 
 Build the assets of a theme: static files, CSS, and JavaScript.

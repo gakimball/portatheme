@@ -83,6 +83,18 @@ describe('Theme', () => {
     });
   });
 
+  describe('compileString()', () => {
+    it('compiles a Pug template to HTML', () => {
+      const theme = new Theme('test/fixtures/base');
+      expect(theme.compileString({ body: 'Kittens' })).to.contain('Kittens');
+    });
+
+    it('allows an alternate layout to be specified', () => {
+      const theme = new Theme('test/fixtures/base');
+      expect(theme.compileString({ body: 'Kittens' }, 'alternate')).to.contain('Puppies');
+    });
+  });
+
   describe('build()', () => {
     it('compiles the assets of a theme', function() {
       // This test runs super slow on Node 4

@@ -84,7 +84,9 @@ describe('Theme', () => {
   });
 
   describe('build()', () => {
-    it('compiles the assets of a theme', () => {
+    it('compiles the assets of a theme', function() {
+      // This test runs super slow on Node 4
+      this.timeout(0);
       const theme = new Theme('test/fixtures/base');
       const dir = tmp.dirSync();
       theme.outputTo(dir.name);

@@ -1,3 +1,5 @@
+'use strict';
+
 const compile = require('./lib/compile');
 const fs = require('fs');
 const getLocation = require('./lib/getLocation');

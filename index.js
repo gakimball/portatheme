@@ -83,7 +83,7 @@ module.exports = class Theme {
     const outputPath = path.join(this.dest, dest);
     const outputDir = path.dirname(outputPath);
     const template = path.join(this.location, `templates/${layout || 'default'}.pug`);
-    return mkdirp(outputDir).then(() => writeFile(outputPath, pug.renderFile(template, data || {})));
+    return mkdirp(outputDir).then(() => writeFile(outputPath, this.compileString(data, layout)));
   }
 
   /**

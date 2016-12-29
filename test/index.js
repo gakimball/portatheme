@@ -4,6 +4,7 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const chaiFiles = require('chai-files');
 const compile = require('../lib/compile');
+const getFiles = require('../lib/getFiles');
 const getLocation = require('../lib/getLocation');
 const path = require('path');
 const Theme = require('..');
@@ -178,5 +179,26 @@ describe('webpackConfig()', () => {
 
   it('allows the watch option to be enabled', () => {
     expect(webpackConfig(true)).to.have.property('watch', true);
+  });
+});
+
+describe('getFiles()', () => {
+  it('produces a set of file paths', () => {
+    expect(getFiles(['base', 'child'])).to.eql({
+      assets: [
+        'base/*.*',
+        'base/assets/**/*',
+        'child/*.*',
+        'child/assets/**/*'
+      ],
+      sass: [
+        'base/scss/**/*.scss',
+        'child/scss/**/*.scss'
+      ],
+      js: [
+        'base/js/**/*.js',
+        'child/js/**/*.js'
+      ]
+    });
   });
 });

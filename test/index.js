@@ -191,11 +191,23 @@ describe('compile()', () => {
 
 describe('webpackConfig()', () => {
   it('returns an object', () => {
-    expect(webpackConfig()).to.be.an('object');
+    expect(webpackConfig([])).to.be.an('object');
   });
 
   it('allows the watch option to be enabled', () => {
-    expect(webpackConfig(true)).to.have.property('watch', true);
+    expect(webpackConfig([], true)).to.have.property('watch', true);
+  });
+
+  it('adds aliases to parent themes', () => {
+    const locations = [
+      'test/fixtures/base',
+      'test/fixtures/parent'
+    ];
+    expect(webpackConfig(locations))
+      .to.have.deep.property('resolve.alias')
+      .that.eql({
+        parent: 'test/fixtures/parent'
+      });
   });
 });
 

@@ -4,8 +4,8 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const chaiFiles = require('chai-files');
 const compile = require('../lib/compile');
-const getFiles = require('../lib/getFiles');
 const getLocation = require('../lib/getLocation');
+const getWatchPaths = require('../lib/getWatchPaths');
 const path = require('path');
 const Theme = require('..');
 const tmp = require('tmp');
@@ -26,7 +26,21 @@ describe('Theme', () => {
 
     it('sets a theme location', () => {
       const theme = new Theme('test/fixtures/base');
-      expect(theme).to.have.property('location').that.contains('test/fixtures/base');
+      expect(theme.location).to.contain('test/fixtures/base');
+    });
+
+    it('inherits a parent theme', () => {
+      const parent = new Theme('test/fixtures/base');
+      const theme = new Theme('test/fixtures/child', parent);
+      expect(theme.parents[0]).to.contain('test/fixtures/base');
+    });
+
+    it('can go deeper', () => {
+      const grandparent = new Theme('test/fixtures/base');
+      const parent = new Theme('test/fixtures/child', grandparent);
+      const theme = new Theme('mocha', parent);
+      expect(theme.parents[0]).to.contain('test/fixtures/child');
+      expect(theme.parents[1]).to.contain('test/fixtures/base');
     });
   });
 
@@ -148,7 +162,7 @@ describe('compile()', () => {
   before(() => {
     const theme = path.join(__dirname, 'fixtures/base');
     dir = tmp.dirSync();
-    return compile(theme, dir.name)();
+    return compile([theme], dir.name)();
   });
 
   it('copies root assets', () => {
@@ -182,9 +196,9 @@ describe('webpackConfig()', () => {
   });
 });
 
-describe('getFiles()', () => {
+describe('getWatchPaths()', () => {
   it('produces a set of file paths', () => {
-    expect(getFiles(['base', 'child'])).to.eql({
+    expect(getWatchPaths(['base', 'child'])).to.eql({
       assets: [
         'base/*.*',
         'base/assets/**/*',

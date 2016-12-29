@@ -28,6 +28,15 @@ module.exports = class Theme {
     this.location = getLocation(location);
 
     /**
+     * Paths to parent themes.
+     * @constant
+     * @type String[]
+     */
+    this.parents = parent
+      ? [parent.location].concat(parent.parents)
+      : [];
+
+    /**
      * Folder to output theme files to.
      * @type ?String
      */
@@ -56,7 +65,7 @@ module.exports = class Theme {
       this.dest = path.join(process.cwd(), location);
     }
 
-    this.compiler = compile(this.location, this.dest);
+    this.compiler = compile([this.location].concat(this.parents), this.dest);
   }
 
   /**

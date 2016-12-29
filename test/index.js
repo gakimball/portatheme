@@ -4,8 +4,10 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const chaiFiles = require('chai-files');
 const compile = require('../lib/compile');
+const getAssetStreams = require('../lib/getAssetStreams');
 const getLocation = require('../lib/getLocation');
 const getWatchPaths = require('../lib/getWatchPaths');
+const Gulp = require('gulp').Gulp;
 const path = require('path');
 const Theme = require('..');
 const tmp = require('tmp');
@@ -214,5 +216,16 @@ describe('getWatchPaths()', () => {
         'child/js/**/*.js'
       ]
     });
+  });
+});
+
+describe('getAssetStreams()', () => {
+  it('returns a stream', () => {
+    const stream = getAssetStreams(new Gulp(), [
+      'test/fixtures/base',
+      'test/fixtures/child'
+    ]);
+
+    expect(stream.pipe).to.be.a('function');
   });
 });

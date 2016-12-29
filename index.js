@@ -34,7 +34,7 @@ module.exports = class Theme {
      * @type String[]
      */
     this.parents = parent
-      ? [parent.location].concat(parent.parents)
+      ? [parent.location].concat(parent.parents || [])
       : [];
 
     /**

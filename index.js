@@ -3,6 +3,7 @@
 const compile = require('./lib/compile');
 const fs = require('fs');
 const getLocation = require('./lib/getLocation');
+const NoLayoutError = require('./lib/NoLayoutError');
 const path = require('path');
 const pify = require('pify');
 const pug = require('pug');
@@ -93,8 +94,31 @@ module.exports = class Theme {
    * @returns {String} Rendered HTML string.
    */
   compileString(data, layout) {
-    const template = path.join(this.location, `templates/${layout || 'default'}.pug`);
-    return pug.renderFile(template, data || {});
+    layout = layout || 'default';
+    const layoutPath = `templates/${layout}.pug`;
+    const locations = [this.location].concat(this.parents);
+    let output;
+
+    for (let i in locations) {
+      try {
+        const template = path.join(locations[i], layoutPath);
+        output = pug.renderFile(template, data || {});
+        break;
+      }
+      catch (e) {
+        // If a file was not found, it's not a problem, unless we're on the last file we can check
+        if (e.code === 'ENOENT') {
+          if (i == locations.length - 1) {
+            throw new NoLayoutError(`Portatheme: no layout file named ${layout}.pug found.`);
+          }
+        }
+        else {
+          throw e;
+        }
+      }
+    }
+
+    return output;
   }
 
   /**

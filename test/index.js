@@ -9,6 +9,7 @@ const getEyeglassConfig = require('../lib/getEyeglassConfig');
 const getLocation = require('../lib/getLocation');
 const getWatchPaths = require('../lib/getWatchPaths');
 const Gulp = require('gulp').Gulp;
+const NoLayoutError = require('../lib/NoLayoutError');
 const path = require('path');
 const Theme = require('..');
 const tmp = require('tmp');
@@ -110,6 +111,22 @@ describe('Theme', () => {
     it('allows an alternate layout to be specified', () => {
       const theme = new Theme('test/fixtures/base');
       expect(theme.compileString({ body: 'Kittens' }, 'alternate')).to.contain('Puppies');
+    });
+
+    it('throws Pug errors', () => {
+      const theme = new Theme('test/fixtures/base');
+      expect(() => theme.compileString({}, 'error')).to.throw(SyntaxError);
+    });
+
+    it('looks in the child and parent themes for a layout', () => {
+      const parent = new Theme('test/fixtures/base');
+      const theme = new Theme('test/fixtures/child', parent);
+      expect(theme.compileString({ body: 'Kittens' })).to.contain('Kittens');
+    });
+
+    it('throws an error if no layout is found', () => {
+      const theme = new Theme('test/fixtures/base');
+      expect(() => theme.compileString({}, 'nope')).to.throw(NoLayoutError);
     });
   });
 

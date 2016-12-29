@@ -5,6 +5,7 @@ const chaiAsPromised = require('chai-as-promised');
 const chaiFiles = require('chai-files');
 const compile = require('../lib/compile');
 const getAssetStreams = require('../lib/getAssetStreams');
+const getEyeglassConfig = require('../lib/getEyeglassConfig');
 const getLocation = require('../lib/getLocation');
 const getWatchPaths = require('../lib/getWatchPaths');
 const Gulp = require('gulp').Gulp;
@@ -227,5 +228,27 @@ describe('getAssetStreams()', () => {
     ]);
 
     expect(stream.pipe).to.be.a('function');
+  });
+});
+
+describe('getEyeglassConfig()', () => {
+  it('returns nothing for a basic theme', () => {
+    const locations = [
+      'test/fixtures/base'
+    ];
+
+    expect(getEyeglassConfig(locations)).to.be.undefined;
+  });
+
+  it('returns a config object for a theme with parents', () => {
+    const locations = [
+      'test/fixtures/base',
+      'test/fixtures/parent'
+    ];
+    const config = getEyeglassConfig(locations);
+    const parentModule = config.eyeglass.modules[0];
+
+    expect(parentModule.name).to.equal('parent');
+    expect(parentModule.main().sassDir).to.contain('test/fixtures/parent');
   });
 });

@@ -1,6 +1,6 @@
 {
   "name": "portatheme",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Small, opinionated theme bundler",
   "main": "index.js",
   "scripts": {
@@ -31,6 +31,7 @@
     "babel-loader": "^6.2.10",
     "babel-preset-latest": "^6.16.0",
     "babel-preset-react": "^6.16.0",
+    "eyeglass": "^1.2.1",
     "gulp": "^3.9.1",
     "gulp-load-plugins": "^1.4.0",
     "gulp-rename": "^1.2.2",

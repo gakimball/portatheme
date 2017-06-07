@@ -1,14 +1,14 @@
 'use strict';
 
-const compile = require('./lib/compile');
 const fs = require('fs');
-const getLocation = require('./lib/getLocation');
-const NoLayoutError = require('./lib/NoLayoutError');
 const path = require('path');
 const pify = require('pify');
 const pug = require('pug');
-
 const mkdirp = pify(require('mkdirp'));
+const compile = require('./lib/compile');
+const getLocation = require('./lib/get-location');
+const NoLayoutError = require('./lib/no-layout-error');
+
 const writeFile = pify(fs.writeFile);
 
 /**
@@ -33,9 +33,9 @@ module.exports = class Theme {
      * @constant
      * @type String[]
      */
-    this.parents = parent
-      ? [parent.location].concat(parent.parents || [])
-      : [];
+    this.parents = parent ?
+      [parent.location].concat(parent.parents || []) :
+      [];
 
     /**
      * Folder to output theme files to.
@@ -56,13 +56,12 @@ module.exports = class Theme {
    */
   outputTo(location) {
     if (typeof location !== 'string') {
-      throw new Error('Theme.outputTo(): path must be a string.');
+      throw new TypeError('Theme.outputTo(): path must be a string.');
     }
 
     if (path.isAbsolute(location)) {
       this.dest = location;
-    }
-    else {
+    } else {
       this.dest = path.join(process.cwd(), location);
     }
 
@@ -83,7 +82,6 @@ module.exports = class Theme {
 
     const outputPath = path.join(this.dest, dest);
     const outputDir = path.dirname(outputPath);
-    const template = path.join(this.location, `templates/${layout || 'default'}.pug`);
     return mkdirp(outputDir).then(() => writeFile(outputPath, this.compileString(data, layout)));
   }
 
@@ -99,21 +97,19 @@ module.exports = class Theme {
     const locations = [this.location].concat(this.parents);
     let output;
 
-    for (let i in locations) {
+    for (let i = 0; i < locations.length; i++) {
       try {
         const template = path.join(locations[i], layoutPath);
         output = pug.renderFile(template, data || {});
         break;
-      }
-      catch (e) {
+      } catch (err) {
         // If a file was not found, it's not a problem, unless we're on the last file we can check
-        if (e.code === 'ENOENT') {
-          if (i == locations.length - 1) {
+        if (err.code === 'ENOENT') {
+          if (i === locations.length - 1) {
             throw new NoLayoutError(`Portatheme: no layout file named ${layout}.pug found.`);
           }
-        }
-        else {
-          throw e;
+        } else {
+          throw err;
         }
       }
     }
@@ -142,6 +138,6 @@ module.exports = class Theme {
       return Promise.reject(new Error('Theme.buildAndWatch(): no output directory has been set. Use Theme.outputTo() to set one.'));
     }
 
-    return this.compiler('watch', { watch: true });
+    return this.compiler('watch', {watch: true});
   }
-}
+};

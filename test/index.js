@@ -1,19 +1,22 @@
+/* eslint-env mocha */
+/* eslint no-unused-expressions:0 */
+
 'use strict';
 
+const path = require('path');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const chaiFiles = require('chai-files');
-const compile = require('../lib/compile');
-const getAssetStreams = require('../lib/getAssetStreams');
-const getEyeglassConfig = require('../lib/getEyeglassConfig');
-const getLocation = require('../lib/getLocation');
-const getWatchPaths = require('../lib/getWatchPaths');
 const Gulp = require('gulp').Gulp;
-const NoLayoutError = require('../lib/NoLayoutError');
-const path = require('path');
-const Theme = require('..');
 const tmp = require('tmp');
+const compile = require('../lib/compile');
+const getAssetStreams = require('../lib/get-asset-streams');
+const getEyeglassConfig = require('../lib/get-eyeglass-config');
+const getLocation = require('../lib/get-location');
+const getWatchPaths = require('../lib/get-watch-paths');
+const NoLayoutError = require('../lib/no-layout-error');
 const webpackConfig = require('../lib/webpack.config');
+const Theme = require('..');
 
 chai.use(chaiAsPromised);
 chai.use(chaiFiles);
@@ -66,7 +69,7 @@ describe('Theme', () => {
       const theme = new Theme('test/fixtures/base');
       const dir = tmp.dirSync();
       theme.outputTo(dir.name);
-      return theme.compilePage('index.html', { body: 'Kittens' }).then(() => {
+      return theme.compilePage('index.html', {body: 'Kittens'}).then(() => {
         expect(file(path.join(dir.name, 'index.html'))).to.contain('Kittens');
       });
     });
@@ -75,7 +78,7 @@ describe('Theme', () => {
       const theme = new Theme('test/fixtures/base');
       const dir = tmp.dirSync();
       theme.outputTo(dir.name);
-      return theme.compilePage('index.html', { body: 'Kittens' }, 'alternate').then(() => {
+      return theme.compilePage('index.html', {body: 'Kittens'}, 'alternate').then(() => {
         expect(file(path.join(dir.name, 'index.html'))).to.contain('Puppies');
       });
     });
@@ -89,14 +92,14 @@ describe('Theme', () => {
       const theme = new Theme('test/fixtures/base');
       const dir = tmp.dirSync();
       theme.outputTo(dir.name);
-      return expect(theme.compilePage('index.html', { body: 'Kittens' }, 'nope')).to.eventually.be.rejectedWith(Error);
+      return expect(theme.compilePage('index.html', {body: 'Kittens'}, 'nope')).to.eventually.be.rejectedWith(Error);
     });
 
     it('can handle a path with a directory', () => {
       const theme = new Theme('test/fixtures/base');
       const dir = tmp.dirSync();
       theme.outputTo(dir.name);
-      return theme.compilePage('subdir/index.html', { body: 'Kittens' }).then(() => {
+      return theme.compilePage('subdir/index.html', {body: 'Kittens'}).then(() => {
         expect(file(path.join(dir.name, 'subdir/index.html'))).exist;
       });
     });
@@ -105,12 +108,12 @@ describe('Theme', () => {
   describe('compileString()', () => {
     it('compiles a Pug template to HTML', () => {
       const theme = new Theme('test/fixtures/base');
-      expect(theme.compileString({ body: 'Kittens' })).to.contain('Kittens');
+      expect(theme.compileString({body: 'Kittens'})).to.contain('Kittens');
     });
 
     it('allows an alternate layout to be specified', () => {
       const theme = new Theme('test/fixtures/base');
-      expect(theme.compileString({ body: 'Kittens' }, 'alternate')).to.contain('Puppies');
+      expect(theme.compileString({body: 'Kittens'}, 'alternate')).to.contain('Puppies');
     });
 
     it('throws Pug errors', () => {
@@ -121,7 +124,7 @@ describe('Theme', () => {
     it('looks in the child and parent themes for a layout', () => {
       const parent = new Theme('test/fixtures/base');
       const theme = new Theme('test/fixtures/child', parent);
-      expect(theme.compileString({ body: 'Kittens' })).to.contain('Kittens');
+      expect(theme.compileString({body: 'Kittens'})).to.contain('Kittens');
     });
 
     it('throws an error if no layout is found', () => {
@@ -131,7 +134,7 @@ describe('Theme', () => {
   });
 
   describe('build()', () => {
-    it('compiles the assets of a theme', function() {
+    it('compiles the assets of a theme', function () {
       // This test runs super slow on Node 4
       this.timeout(0);
       const theme = new Theme('test/fixtures/base');
@@ -171,7 +174,7 @@ describe('getLocation()', () => {
   });
 
   it('can find a folder in node_modules', () => {
-    // mocha isn't a theme folder, but we can use it to test that node_modules are searched
+    // Mocha isn't a theme folder, but we can use it to test that node_modules are searched
     expect(getLocation('mocha')).to.contain('/node_modules/mocha');
   });
 });
